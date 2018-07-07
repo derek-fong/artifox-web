@@ -21,7 +21,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
-      - run: npm run test -- --single-run --no-progress
+      - run: npm run test -- --no-progress --watch=false
 
 workflows:
   version: 2
