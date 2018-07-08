@@ -3,7 +3,7 @@ version: 2
 # Settings common to each job
 job_defaults: &job_defaults
   docker:
-    - image: circleci/node:7.10-browsers
+    - image: circleci/node:10.5.0-browsers
   working_directory: ~/repo
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
-      - run: npm run test -- --no-progress --watch=false
+      - run: npm run test -- --progress=false --watch=false
 
 workflows:
   version: 2
