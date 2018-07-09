@@ -7,6 +7,19 @@ job_defaults: &job_defaults
   working_directory: ~/repo
 
 jobs:
+  code_coverage:
+    <<: *job_defaults
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+        - v1-dependencies-{{ checksum "package-lock.json" }}
+        # fallback to using the latest cache if no exact match is found
+        - v1-dependencies-
+    - run: npm install
+    - run: npm run test -- --code-coverage --progress=false --watch=false
+    - run: npm run codecov -- --token=$CODECOV_TOKEN
+
   unit_tests:
     <<: *job_defaults
     steps:
@@ -28,3 +41,4 @@ workflows:
   default_workflow:
     jobs:
       - unit_tests
+      - code_coverage
