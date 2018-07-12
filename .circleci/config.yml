@@ -1,44 +1,87 @@
 version: 2
 
-# Settings common to each job
+# Settings common to each job.
 job_defaults: &job_defaults
   docker:
-    - image: circleci/node:10.5.0-browsers
+  - image: circleci/node:10.5.0-browsers
   working_directory: ~/repo
+
+# Install NPM dependencies.
+run_npm_install: &run_npm_install
+  run:
+    name: Install NPM Dependencies
+    command: npm install
+
+# Restore versioned cache.
+restore_versioned_cache: &restore_versioned_cache
+  restore_cache:
+    keys:
+    - $CACHE_VERSION-dependencies-{{ checksum "package-lock.json" }}
+      # Fallback to using the latest cache if no exact match is found.
+    - $CACHE_VERSION-dependencies-
 
 jobs:
   code_coverage:
     <<: *job_defaults
     steps:
     - checkout
-    - restore_cache:
-        keys:
-        - $CACHE_VERSION-dependencies-{{ checksum "package-lock.json" }}
-        # fallback to using the latest cache if no exact match is found
-        - $CACHE_VERSION-dependencies-
-    - run: npm install
-    - run: npm run test -- --code-coverage --progress=false --watch=false
-    - run: npm run codecov -- --token=$CODECOV_TOKEN
+    - *restore_versioned_cache
+    - *run_npm_install
+    - run:
+        name: Run Code Coverage
+        command: npm run test -- --code-coverage --progress=false --watch=false
+    - run:
+        name: Upload Code Coverage to Codecov
+        command: npm run codecov -- --token=$CODECOV_TOKEN
+
+  deploy_prod:
+    <<: *job_defaults
+    steps:
+    - checkout
+    - *restore_versioned_cache
+    - *run_npm_install
+    - run:
+        name: Build Artifacts
+        command: npm run build -- --prod
+    - deploy:
+        name: Deploy to Firebase
+        command: npm run firebase -- deploy --only=hosting --token=$FIREBASE_TOKEN --non-interactive
 
   unit_tests:
     <<: *job_defaults
     steps:
-      - checkout
-      - restore_cache:
-          keys:
-          - $CACHE_VERSION-dependencies-{{ checksum "package-lock.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - $CACHE_VERSION-dependencies-
-      - run: npm install
-      - save_cache:
-          key: $CACHE_VERSION-dependencies-{{ checksum "package-lock.json" }}
-          paths:
-            - node_modules
-      - run: npm run test -- --progress=false --watch=false
+    - checkout
+    - *restore_versioned_cache
+    - *run_npm_install
+    - run:
+        name: Run Unit Tests
+        command: npm run test -- --progress=false --watch=false
+
+  update_cache:
+    <<: *job_defaults
+    steps:
+    - checkout
+    - *restore_versioned_cache
+    - *run_npm_install
+    - save_cache:
+        key: $CACHE_VERSION-dependencies-{{ checksum "package-lock.json" }}
+        paths:
+        - node_modules
 
 workflows:
   version: 2
-  default_workflow:
+  test_build_deploy:
     jobs:
-      - unit_tests
-      - code_coverage
+    - update_cache
+    - unit_tests:
+        requires:
+        - update_cache
+    - code_coverage:
+        requires:
+        - update_cache
+    - deploy_prod:
+        requires:
+        - unit_tests
+        filters:
+          branches:
+            only: master
