@@ -1,31 +1,78 @@
-import { TestBed, async } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
+import { TestBed, async, ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+
 import { AppComponent } from './app.component';
+
 describe('AppComponent', () => {
+  let component: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule
-      ],
-      declarations: [
-        AppComponent
-      ],
+      declarations: [ AppComponent ],
+      schemas: [ NO_ERRORS_SCHEMA ]
     }).compileComponents();
   }));
-  it('should create the app', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
-  }));
-  it(`should have as title 'Artifox'`, async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('Artifox');
-  }));
-  it('should render title in a h1 tag', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to Artifox!');
-  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.debugElement.componentInstance;
+  });
+
+  it('should be created', () => {
+    expect(component).toBeTruthy();
+  });
+
+  describe('Top toolbar', () => {
+    let topToolbarDebugElement: DebugElement;
+
+    beforeEach(() => {
+      topToolbarDebugElement = fixture.debugElement.query(By.css('ax-top-toolbar'));
+    });
+
+    it('should be created', () => {
+      expect(!!topToolbarDebugElement).toBeTruthy();
+    });
+  });
+
+  describe('Sidenav container', () => {
+    let sidenavContainerDebugElement: DebugElement;
+
+    beforeEach(() => {
+      sidenavContainerDebugElement = fixture.debugElement.query(By.css('mat-sidenav-container'));
+    });
+
+    it('should be created', () => {
+      expect(!!sidenavContainerDebugElement).toBeTruthy();
+    });
+
+    describe('Sidenav', () => {
+      let sidenavDebugElement: DebugElement;
+
+      beforeEach(() => {
+        sidenavDebugElement = sidenavContainerDebugElement.query(By.css('mat-sidenav'));
+      });
+
+      it('should be created', () => {
+        expect(!!sidenavDebugElement).toBeTruthy();
+      });
+    });
+
+    describe('Sidenav content', () => {
+      let sidenavContentDebugElement: DebugElement;
+
+      beforeEach(() => {
+        sidenavContentDebugElement = sidenavContainerDebugElement.query(By.css('mat-sidenav-content'));
+      });
+
+      it('should be created', () => {
+        expect(!!sidenavContentDebugElement).toBeTruthy();
+      });
+
+      it('should contain `router-outlet`', () => {
+        expect(!!sidenavContentDebugElement.query(By.css('router-outlet'))).toBeTruthy();
+      });
+    });
+  });
 });
