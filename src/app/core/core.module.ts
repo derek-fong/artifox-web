@@ -15,9 +15,11 @@ import { ToastrModule } from 'ngx-toastr';
 
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { TopToolbarComponent } from './top-toolbar/top-toolbar.component';
+import { AuthModule } from '../auth/auth.module';
 
 @NgModule({
   imports: [
+    AuthModule,
     BrowserAnimationsModule,
     MatButtonModule,
     MatIconModule,

@@ -3,6 +3,17 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
+  auth: {
+    auth0: {
+      clientID: 'm3htc7qf25YObwGDmeP5ID8hGrCBsbEz',
+      domain: 'artifox-dev.au.auth0.com',
+      namespace: 'http://localhost:4200',
+      responseType: 'token id_token',
+      scope: `openid profile`,
+      get audience () { return `https://${this.domain}/userinfo`; },
+      get redirectUri () { return `${this.namespace}/auth/callback`; },
+    }
+  },
   production: false
 };
 
