@@ -9,8 +9,8 @@ import { HttpStatusModule } from './http-status/http-status.module';
 @NgModule({
   imports: [
     CoreModule,
-    AppRoutingModule,
-    HttpStatusModule
+    HttpStatusModule,
+    AppRoutingModule
   ],
   declarations: [ AppComponent ],
   bootstrap: [ AppComponent ]
