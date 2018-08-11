@@ -20,8 +20,13 @@ describe('PermissionGuard', () => {
 
   beforeEach(() => {
     const routes: Routes = [
-      { component: StubComponent, path: '403' },
-      { component: StubComponent, path: '500' }
+      {
+        children: [
+          { component: StubComponent, path: '403' },
+          { component: StubComponent, path: '500' }
+        ],
+        path: 'error'
+      }
     ];
 
     TestBed.configureTestingModule({
@@ -79,10 +84,10 @@ describe('PermissionGuard', () => {
           spyOn(authService, 'hasPermission').and.returnValue(false);
         });
 
-        it('should navigate to `/403`', () => {
+        it('should navigate to `/error/403`', () => {
           spyOn(router, 'navigate');
           permissionGuard.canActivate(route);
-          expect(router.navigate).toHaveBeenCalledWith(['/403']);
+          expect(router.navigate).toHaveBeenCalledWith(['/error/403']);
         });
 
         it('should return `false`', () => {
@@ -98,10 +103,10 @@ describe('PermissionGuard', () => {
         }
       };
 
-      it('should navigate to `/500`', () => {
+      it('should navigate to `/error/500`', () => {
         spyOn(router, 'navigate');
         permissionGuard.canActivate(invalidRoute);
-        expect(router.navigate).toHaveBeenCalledWith(['/500']);
+        expect(router.navigate).toHaveBeenCalledWith(['/error/500']);
       });
 
       it('should return `false`', () => {

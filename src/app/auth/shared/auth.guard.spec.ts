@@ -26,7 +26,10 @@ describe('AuthGuard', () => {
 
   beforeEach(() => {
     const routes: Routes = [
-      { component: StubComponent, path: '401' }
+      {
+        children: [ { component: StubComponent, path: '401' } ],
+        path: 'error'
+      },
     ];
 
     TestBed.configureTestingModule({
@@ -74,12 +77,12 @@ describe('AuthGuard', () => {
         expect(authGuard.canActivate()).toEqual(false);
       });
 
-      it('should navigate to `/401`', fakeAsync(inject(
+      it('should navigate to `/error/401`', fakeAsync(inject(
         [ Location ],
         (location: Location) => {
           authGuard.canActivate();
           tick();
-          expect(location.path()).toEqual('/401');
+          expect(location.path()).toEqual('/error/401');
         }
       )));
     });

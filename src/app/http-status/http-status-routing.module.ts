@@ -8,20 +8,20 @@ import { Http500Component } from './http-500/http-500.component';
 
 const routes: Routes = [
   {
-    path: '401',
-    component: Http401Component
+    component: Http401Component,
+    path: '401'
   },
   {
-    path: '403',
-    component: Http403Component
+    component: Http403Component,
+    path: '403'
   },
   {
-    path: '404',
-    component: Http404Component
+    component: Http404Component,
+    path: '404'
   },
   {
-    path: '500',
-    component: Http500Component
+    component: Http500Component,
+    path: '500'
   }
 ];
 

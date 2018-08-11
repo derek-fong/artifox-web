@@ -29,10 +29,10 @@ export class PermissionGuard implements CanActivate {
       hasPermission = this.authService.hasPermission(permission);
 
       if (!hasPermission) {
-        this.router.navigate(['/403']);
+        this.router.navigate(['/error/403']);
       }
     } else {
-      this.router.navigate(['/500']);
+      this.router.navigate(['/error/500']);
     }
 
     return hasPermission;

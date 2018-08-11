@@ -15,8 +15,12 @@ const routes: Routes = [
     path: 'dashboard'
   },
   {
+    loadChildren: './http-status/http-status.module#HttpStatusModule',
+    path: 'error'
+  },
+  {
     path: '**',
-    redirectTo: '/404'
+    redirectTo: '/error/404'
   }
 ];
 
