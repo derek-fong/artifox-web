@@ -1,6 +1,7 @@
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed, async, ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 import { AppComponent } from './app.component';
 
@@ -10,6 +11,7 @@ describe('AppComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [ ServiceWorkerModule.register('', { enabled: false }) ],
       declarations: [ AppComponent ],
       schemas: [ NO_ERRORS_SCHEMA ]
     }).compileComponents();
