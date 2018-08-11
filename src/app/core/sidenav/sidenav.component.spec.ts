@@ -84,5 +84,23 @@ describe('SidenavComponent', () => {
         expect(component.onNavigate).toHaveBeenCalledWith('');
       });
     });
+
+    describe('`Dashboard` list item', () => {
+      let dashboardListItemDebugElement: DebugElement;
+
+      beforeEach(() => {
+        dashboardListItemDebugElement = navListDebugElement.query(By.css('#dashboard-list-item'));
+      });
+
+      it('should be created', () => {
+        expect(!!dashboardListItemDebugElement).toBeTruthy();
+      });
+
+      it('should navigate to `/dashboard` on click', () => {
+        spyOn(component, 'onNavigate');
+        dashboardListItemDebugElement.nativeElement.click();
+        expect(component.onNavigate).toHaveBeenCalledWith('/dashboard');
+      });
+    });
   });
 });
