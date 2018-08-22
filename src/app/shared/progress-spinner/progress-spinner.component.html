@@ -1,0 +1,7 @@
+<div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1%">
+  <div fxFlex>
+    <mat-spinner *ngIf="!isPlatformServer"></mat-spinner>
+    <div id="progress-spinner" *ngIf="isPlatformServer"></div>
+  </div>
+  <p *ngIf="message && message.length > 0" id="message" fxFlex><strong>{{message}}</strong></p>
+</div>

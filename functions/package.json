@@ -1,0 +1,40 @@
+{
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase serve --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "dependencies": {
+    "@angular/animations": "^6.0.9",
+    "@angular/cdk": "^6.3.3",
+    "@angular/common": "^6.0.3",
+    "@angular/compiler": "^6.0.3",
+    "@angular/core": "^6.0.3",
+    "@angular/flex-layout": "^6.0.0-beta.17",
+    "@angular/forms": "^6.0.3",
+    "@angular/http": "^6.0.3",
+    "@angular/material": "^6.3.3",
+    "@angular/platform-browser": "^6.0.3",
+    "@angular/platform-browser-dynamic": "^6.0.3",
+    "@angular/platform-server": "^6.0.3",
+    "@angular/pwa": "^0.6.8",
+    "@angular/router": "^6.0.3",
+    "@angular/service-worker": "^6.0.3",
+    "@nguniversal/express-engine": "^6.0.0",
+    "@nguniversal/module-map-ngfactory-loader": "^6.0.0",
+    "auth0-js": "^9.7.3",
+    "express": "^4.16.3",
+    "firebase-admin": "~5.12.1",
+    "firebase-functions": "^1.0.3",
+    "jwt-decode": "^2.2.0",
+    "ngx-toastr": "^8.10.0",
+    "reflect-metadata": "^0.1.12",
+    "rxjs": "^6.0.0",
+    "zone.js": "^0.8.26"
+  },
+  "private": true
+}

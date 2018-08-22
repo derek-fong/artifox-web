@@ -1,1 +1,5 @@
-<h1>Dashboard Container</h1>
+<div *ngIf="!isPlatformServer" id="dashboard-container">
+  <h1>Dashboard Container</h1>
+</div>
+
+<ax-progress-spinner-container *ngIf="isPlatformServer" [message]="'Loading Dashboard...'"></ax-progress-spinner-container>

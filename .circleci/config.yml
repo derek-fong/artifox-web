@@ -39,13 +39,19 @@ jobs:
     steps:
     - checkout
     - *restore_versioned_cache
-    - *run_npm_install
+    - run:
+        name: Install Firebase NPM Dependencies
+        command: npm --prefix functions install
     - run:
         name: Build Artifacts
-        command: npm run build -- --prod
+        command: |
+          npm run build -- --prod
+          npm run ng -- run $PROJECT_NAME:server:production
+          cp -a functions/dist/browser/. functions/dist/public/
+          mv functions/dist/public/index.html functions/dist/public/index-public.html
     - deploy:
         name: Deploy to Firebase
-        command: npm run firebase -- deploy --only=hosting --token=$FIREBASE_TOKEN --non-interactive
+        command: npm run firebase -- deploy --token=$FIREBASE_TOKEN --non-interactive
 
   unit_tests:
     <<: *job_defaults

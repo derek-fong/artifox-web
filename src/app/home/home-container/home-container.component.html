@@ -1,1 +1,5 @@
-<h1>Home Container</h1>
+<div *ngIf="!isPlatformServer" id="home-container">
+  <h1>Home Container</h1>
+</div>
+
+<ax-progress-spinner-container *ngIf="isPlatformServer" [message]="'Loading...'"></ax-progress-spinner-container>

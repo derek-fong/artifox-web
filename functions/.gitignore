@@ -1,0 +1,5 @@
+# complied output
+/dist
+
+# dependencies
+/node_modules

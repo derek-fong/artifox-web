@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import {
+  Component,
+  Inject,
+  OnInit,
+  PLATFORM_ID
+} from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 
 @Component({
@@ -8,15 +14,27 @@ import { SwUpdate } from '@angular/service-worker';
 })
 export class AppComponent implements OnInit {
 
-  constructor(private swUpdate: SwUpdate) { }
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private swUpdate: SwUpdate
+  ) { }
 
   ngOnInit(): void {
-    if (this.swUpdate.isEnabled) {
+    /* istanbul ignore else */
+    if (isPlatformBrowser(this.platformId) && this.swUpdate.isEnabled) {
       this.swUpdate.available.subscribe(() => {
         if (confirm('New version available. Load New Version?')) {
-          window.location.reload();
+          this.reload();
         }
       });
     }
+  }
+
+  /**
+   * Reload.
+   */
+  /* istanbul ignore next */
+  private reload(): void {
+    window.location.reload();
   }
 }

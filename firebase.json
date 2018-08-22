@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/artifox",
+    "public": "functions/dist/public",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -8,8 +8,12 @@
     ],
     "rewrites": [
       {
+        "source" : "**/*.@(css|js)",
+        "destination": "/index-public.html"
+      },
+      {
         "source": "**",
-        "destination": "/index.html"
+        "function": "serverSideRendering"
       }
     ]
   }

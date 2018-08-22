@@ -1,24 +1,31 @@
-import { NgModule } from '@angular/core';
-import { ServiceWorkerModule } from '@angular/service-worker';
+import { isPlatformBrowser } from '@angular/common';
+import {
+  Inject,
+  NgModule,
+  PLATFORM_ID
+} from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthService } from './auth/shared/auth.service';
 import { CoreModule } from './core/core.module';
-import { environment } from '../environments/environment';
 
 @NgModule({
   imports: [
     CoreModule,
-    AppRoutingModule,
-    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
+    AppRoutingModule
   ],
   declarations: [ AppComponent ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule {
 
-  constructor(private authService: AuthService) {
-    this.authService.handleAuthentication();
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private authService: AuthService
+  ) {
+    if (isPlatformBrowser(this.platformId)) {
+      this.authService.handleAuthentication();
+    }
   }
 }

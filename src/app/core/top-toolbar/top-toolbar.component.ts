@@ -1,7 +1,10 @@
+import { isPlatformServer } from '@angular/common';
 import {
   Component,
   EventEmitter,
-  Output
+  Inject,
+  Output,
+  PLATFORM_ID
 } from '@angular/core';
 
 import { AuthService } from '../../auth/shared/auth.service';
@@ -13,8 +16,12 @@ import { AuthService } from '../../auth/shared/auth.service';
 })
 export class TopToolbarComponent {
   @Output() toggleSidenav = new EventEmitter();
+  isPlatformServer: boolean = isPlatformServer(this.platformId);
 
-  constructor(private authService: AuthService) { }
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private authService: AuthService
+  ) { }
 
   /**
    * Determine if current user is authenticated.

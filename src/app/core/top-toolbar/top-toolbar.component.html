@@ -1,6 +1,10 @@
 <mat-toolbar color="primary" class="fixed-header mat-elevation-z4">
-  <button *ngIf="isAuthenticated()" mat-button (click)="onToggleSidenav()" id="sidenav-button"><mat-icon>list</mat-icon></button>
+  <div *ngIf="!isPlatformServer">
+    <button *ngIf="isAuthenticated()" mat-button (click)="onToggleSidenav()" id="sidenav-button"><mat-icon>list</mat-icon></button>
+  </div>
   <div class="spacer-toolbar"></div>
-  <button *ngIf="isAuthenticated()" mat-button id="logout-button" (click)="onLogout()">Logout</button>
-  <button *ngIf="!isAuthenticated()" mat-button id="login-button" (click)="onLogin()">Login</button>
+  <div *ngIf="!isPlatformServer">
+    <button *ngIf="isAuthenticated()" mat-button id="logout-button" (click)="onLogout()">Logout</button>
+    <button *ngIf="!isAuthenticated()" mat-button id="login-button" (click)="onLogin()">Login</button>
+  </div>
 </mat-toolbar>

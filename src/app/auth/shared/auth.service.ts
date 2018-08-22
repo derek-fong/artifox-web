@@ -1,5 +1,10 @@
 import * as jwtDecode from 'jwt-decode';
-import { Injectable } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import {
+  Inject,
+  Injectable,
+  PLATFORM_ID
+} from '@angular/core';
 import { Router } from '@angular/router';
 import {
   Auth0Callback,
@@ -16,33 +21,40 @@ export class AuthService {
   private webAuth: WebAuth;
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
     private router: Router,
     private toastrService: ToastrService
   ) {
-    const {
-      audience,
-      clientID,
-      domain,
-      redirectUri,
-      responseType,
-      scope
-    } = environment.auth.auth0;
+    /* istanbul ignore else */
+    if (isPlatformBrowser(this.platformId)) {
+      const {
+        audience,
+        clientID,
+        domain,
+        redirectUri,
+        responseType,
+        scope
+      } = environment.auth.auth0;
 
-    this.webAuth = new WebAuth({
-      audience,
-      clientID,
-      domain,
-      redirectUri,
-      responseType,
-      scope
-    });
+      this.webAuth = new WebAuth({
+        audience,
+        clientID,
+        domain,
+        redirectUri,
+        responseType,
+        scope
+      });
+    }
   }
 
   /**
    * Handle authentications.
    */
   handleAuthentication(): void {
-    this.webAuth.parseHash(this.getAuthCallback());
+    /* istanbul ignore else */
+    if (isPlatformBrowser(this.platformId)) {
+      this.webAuth.parseHash(this.getAuthCallback());
+    }
   }
 
   /**
@@ -86,26 +98,39 @@ export class AuthService {
    * @returns {boolean} - `true` if current user is authenticated; `false` otherwise.
    */
   isAuthenticated(): boolean {
-    const expiresAt = JSON.parse(localStorage.getItem('expires_at') || '{}');
+    let isAuthenticated = false;
 
-    return new Date().getTime() < expiresAt;
+    /* istanbul ignore else */
+    if (isPlatformBrowser(this.platformId)) {
+      const expiresAt = JSON.parse(localStorage.getItem('expires_at') || '{}');
+
+      isAuthenticated = new Date().getTime() < expiresAt;
+    }
+
+    return isAuthenticated;
   }
 
   /**
    * Login.
    */
   login(): void {
-    this.webAuth.authorize();
+    /* istanbul ignore else */
+    if (isPlatformBrowser(this.platformId)) {
+      this.webAuth.authorize();
+    }
   }
 
   /**
    * Logout.
    */
   logout(): void {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('id_token');
-    localStorage.removeItem('expires_at');
-    this.router.navigate([ '/' ]);
+    /* istanbul ignore else */
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('id_token');
+      localStorage.removeItem('expires_at');
+      this.router.navigate([ '/' ]);
+    }
   }
 
   /**
@@ -115,6 +140,7 @@ export class AuthService {
   private getAppMetadataPropertyName(): string | null {
     let appMetadataPropertyName: string = null;
 
+    /* istanbul ignore else */
     if (
       environment &&
       Object.prototype.hasOwnProperty.call(environment, 'auth') && environment.auth &&
@@ -133,14 +159,18 @@ export class AuthService {
    * @returns {object|null} - Decoded ID token if valid; `null` otherwise.
    */
   private getDecodedIdToken(): object|null {
-    const strIdToken = localStorage.getItem('id_token');
     let idToken = null;
 
-    if (strIdToken && typeof strIdToken === 'string') {
-      try {
-        idToken = jwtDecode(strIdToken);
-      } catch (error) {
-        this.toastrService.error('Invalid ID Token');
+    /* istanbul ignore else */
+    if (isPlatformBrowser(this.platformId)) {
+      const strIdToken = localStorage.getItem('id_token');
+
+      if (strIdToken && typeof strIdToken === 'string') {
+        try {
+          idToken = jwtDecode(strIdToken);
+        } catch (error) {
+          this.toastrService.error('Invalid ID Token');
+        }
       }
     }
 
@@ -162,20 +192,26 @@ export class AuthService {
    */
   private getAuthCallback(): Auth0Callback<Auth0DecodedHash> {
     return (error: null | Auth0Error, auth0DecodedHash: Auth0DecodedHash): void  => {
-      if (
-        auth0DecodedHash &&
-        Object.prototype.hasOwnProperty.call(auth0DecodedHash, 'accessToken') && auth0DecodedHash.accessToken &&
-        Object.prototype.hasOwnProperty.call(auth0DecodedHash, 'idToken') && auth0DecodedHash.idToken
-      ) {
-        localStorage.setItem('access_token', auth0DecodedHash.accessToken);
-        localStorage.setItem('id_token', auth0DecodedHash.idToken);
-        localStorage.setItem('expires_at', this.getTokenExpiresAt(auth0DecodedHash.expiresIn));
-        window.location.hash = '';
-        this.router.navigate(['/']);
-      } else if (error) {
-        this.router.navigate(['/']).then(() => {
-          this.toastrService.error(error.name, error.description);
-        });
+      /* istanbul ignore else */
+      if (isPlatformBrowser(this.platformId)) {
+        if (
+          auth0DecodedHash &&
+          Object.prototype.hasOwnProperty.call(auth0DecodedHash, 'accessToken') && auth0DecodedHash.accessToken &&
+          Object.prototype.hasOwnProperty.call(auth0DecodedHash, 'idToken') && auth0DecodedHash.idToken
+        ) {
+          localStorage.setItem('access_token', auth0DecodedHash.accessToken);
+          localStorage.setItem('id_token', auth0DecodedHash.idToken);
+          localStorage.setItem('expires_at', this.getTokenExpiresAt(auth0DecodedHash.expiresIn));
+          window.location.hash = '';
+          this.router.navigate(['/']);
+        } else {
+          /* istanbul ignore else */
+          if (error) {
+            this.router.navigate(['/']).then(() => {
+              this.toastrService.error(error.name, error.description);
+            });
+          }
+        }
       }
     };
   }

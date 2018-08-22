@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   NgModule,
   Optional,
@@ -10,29 +11,35 @@ import {
   MatSidenavModule,
   MatToolbarModule
 } from '@angular/material';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ServiceWorkerModule } from '@angular/service-worker';
 import { ToastrModule } from 'ngx-toastr';
 
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { TopToolbarComponent } from './top-toolbar/top-toolbar.component';
 import { AuthModule } from '../auth/auth.module';
 import { HomeModule } from '../home/home.module';
+import { environment } from '../../environments/environment';
 
 @NgModule({
   imports: [
     AuthModule,
     BrowserAnimationsModule,
+    BrowserModule.withServerTransition({ appId: environment.appId }),
+    CommonModule,
     HomeModule,
     MatButtonModule,
     MatIconModule,
     MatListModule,
     MatSidenavModule,
     MatToolbarModule,
-    ToastrModule.forRoot(),
+    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
+    ToastrModule.forRoot()
   ],
   declarations: [
-    TopToolbarComponent,
-    SidenavComponent
+    SidenavComponent,
+    TopToolbarComponent
   ],
   exports: [
     MatSidenavModule,
