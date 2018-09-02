@@ -7,16 +7,26 @@ import {
 } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { Apollo } from 'apollo-angular';
 import { Auth0DecodedHash } from 'auth0-js';
 import { ToastrService } from 'ngx-toastr';
 
 import { AuthService } from './auth.service';
+
+class ApolloStub {
+  getClient() {
+    return {
+      resetStore() { }
+    };
+  }
+}
 
 class ToastrServiceStub {
   error() { }
 }
 
 describe('AuthService', () => {
+  let apollo: Apollo;
   let authService: AuthService;
   let location: Location;
   let router: Router;
@@ -27,6 +37,7 @@ describe('AuthService', () => {
       imports: [ RouterTestingModule ],
       providers: [
         AuthService,
+        { provide: Apollo, useClass: ApolloStub },
         { provide: ToastrService, useClass: ToastrServiceStub }
       ]
     });
@@ -35,17 +46,20 @@ describe('AuthService', () => {
   beforeEach(
     inject(
       [
+        Apollo,
         AuthService,
         Location,
         Router,
         ToastrService
       ],
       (
+        _apollo: Apollo,
         _authService: AuthService,
         _location: Location,
         _router: Router,
         _toastrService: ToastrService
       ) => {
+        apollo = _apollo,
         authService = _authService;
         location = _location;
         router = _router;
@@ -54,8 +68,20 @@ describe('AuthService', () => {
     )
   );
 
+  beforeEach(() => {
+    spyOn((authService as any), 'reload');
+  });
+
   it('should be created', () => {
     expect(authService).toBeTruthy();
+  });
+
+  describe('#getIdToken', () => {
+    it('should get ID token from local storage', () => {
+      spyOn(localStorage, 'getItem');
+      authService.getIdToken();
+      expect(localStorage.getItem).toHaveBeenCalledWith('id_token');
+    });
   });
 
   describe('#handleAuthentication', () => {
@@ -250,6 +276,13 @@ describe('AuthService', () => {
       expect(localStorage.removeItem).toHaveBeenCalledWith('expires_at');
     });
 
+    it('should clear Apollo caches', () => {
+      spyOn(apollo, 'getClient').and.returnValue({ resetStore: () => { } });
+      spyOn(apollo.getClient(), 'resetStore');
+      authService.logout();
+      expect(apollo.getClient().resetStore).toHaveBeenCalled();
+    });
+
     it('should navigate to `/`', fakeAsync(() => {
       authService.logout();
       tick();
@@ -298,7 +331,7 @@ describe('AuthService', () => {
         it('should show an error toast', () => {
           spyOn(toastrService, 'error');
           (authService as any).getDecodedIdToken();
-          expect(toastrService.error).toHaveBeenCalledWith('Invalid ID Token');
+          expect(toastrService.error).toHaveBeenCalledWith('Invalid ID Token. ');
         });
       });
     });
@@ -348,7 +381,7 @@ describe('AuthService', () => {
       });
 
       it('should navigate to app root', () => {
-        spyOn(router, 'navigate');
+        spyOn(router, 'navigate').and.returnValue(Promise.resolve());
         (authService as any).getAuthCallback()(null, auth0DecodedHash);
         expect(router.navigate).toHaveBeenCalledWith(['/']);
       });

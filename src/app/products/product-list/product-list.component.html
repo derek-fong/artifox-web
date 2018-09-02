@@ -1,0 +1,8 @@
+<mat-list *ngIf="products && products.length > 0" id="product-list" role="list">
+  <mat-list-item *ngFor="let product of products" role="listitem">
+    <h3 matLine> {{product.name}} <span class="product-id">({{product.id}})</span></h3>
+    <p matLine>{{product.description}}</p>
+  </mat-list-item>
+</mat-list>
+
+

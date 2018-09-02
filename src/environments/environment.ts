@@ -5,6 +5,10 @@
 const appUrl = 'http://localhost:4200';
 
 export const environment = {
+  apollo: {
+    uri: 'http://localhost:4000/graphql',
+    ws: 'ws://localhost:4000/graphql'
+  },
   appId: 'artifox-dev',
   auth: {
     auth0: {
@@ -12,7 +16,7 @@ export const environment = {
       domain: 'artifox-dev.au.auth0.com',
       namespace: appUrl,
       responseType: 'token id_token',
-      scope: `openid profile`,
+      scope: `openid`,
       get audience () { return `https://${this.domain}/userinfo`; },
       get redirectUri () { return `${this.namespace}/auth/callback`; },
     }

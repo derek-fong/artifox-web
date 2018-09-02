@@ -19,6 +19,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { TopToolbarComponent } from './top-toolbar/top-toolbar.component';
 import { AuthModule } from '../auth/auth.module';
+import { GraphqlModule } from '../graphql/graphql.module';
 import { HomeModule } from '../home/home.module';
 import { environment } from '../../environments/environment';
 
@@ -28,6 +29,7 @@ import { environment } from '../../environments/environment';
     BrowserAnimationsModule,
     BrowserModule.withServerTransition({ appId: environment.appId }),
     CommonModule,
+    GraphqlModule,
     HomeModule,
     MatButtonModule,
     MatIconModule,

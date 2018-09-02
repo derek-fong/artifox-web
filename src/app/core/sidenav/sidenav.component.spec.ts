@@ -102,5 +102,23 @@ describe('SidenavComponent', () => {
         expect(component.onNavigate).toHaveBeenCalledWith('/dashboard');
       });
     });
+
+    describe('`Products` list item', () => {
+      let productsListItemDebugElement: DebugElement;
+
+      beforeEach(() => {
+        productsListItemDebugElement = navListDebugElement.query(By.css('#products-list-item'));
+      });
+
+      it('should be created', () => {
+        expect(!!productsListItemDebugElement).toBeTruthy();
+      });
+
+      it('should navigate to `/products` on click', () => {
+        spyOn(component, 'onNavigate');
+        productsListItemDebugElement.nativeElement.click();
+        expect(component.onNavigate).toHaveBeenCalledWith('/products');
+      });
+    });
   });
 });

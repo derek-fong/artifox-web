@@ -6,6 +6,7 @@ import {
   PLATFORM_ID
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { Apollo } from 'apollo-angular';
 import {
   Auth0Callback,
   Auth0DecodedHash,
@@ -22,6 +23,7 @@ export class AuthService {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
+    private apollo: Apollo,
     private router: Router,
     private toastrService: ToastrService
   ) {
@@ -45,6 +47,14 @@ export class AuthService {
         scope
       });
     }
+  }
+
+  /**
+   * Get ID token.
+   * @returns {string} - ID Token.
+   */
+  getIdToken(): string {
+    return localStorage.getItem('id_token');
   }
 
   /**
@@ -129,6 +139,7 @@ export class AuthService {
       localStorage.removeItem('access_token');
       localStorage.removeItem('id_token');
       localStorage.removeItem('expires_at');
+      this.apollo.getClient().resetStore();
       this.router.navigate([ '/' ]);
     }
   }
@@ -163,13 +174,14 @@ export class AuthService {
 
     /* istanbul ignore else */
     if (isPlatformBrowser(this.platformId)) {
-      const strIdToken = localStorage.getItem('id_token');
+      const strIdToken = this.getIdToken();
 
+      /* istanbul ignore else */
       if (strIdToken && typeof strIdToken === 'string') {
         try {
           idToken = jwtDecode(strIdToken);
         } catch (error) {
-          this.toastrService.error('Invalid ID Token');
+          this.toastrService.error('Invalid ID Token. ');
         }
       }
     }
@@ -203,16 +215,24 @@ export class AuthService {
           localStorage.setItem('id_token', auth0DecodedHash.idToken);
           localStorage.setItem('expires_at', this.getTokenExpiresAt(auth0DecodedHash.expiresIn));
           window.location.hash = '';
-          this.router.navigate(['/']);
+          this.router.navigate(['/'])
+            .then(() => this.reload());
         } else {
           /* istanbul ignore else */
           if (error) {
-            this.router.navigate(['/']).then(() => {
-              this.toastrService.error(error.name, error.description);
-            });
+            this.router.navigate(['/'])
+              .then(() => this.toastrService.error(error.name, error.description));
           }
         }
       }
     };
+  }
+
+  /**
+   * Reload.
+   */
+  /* istanbul ignore next */
+  private reload(): void {
+    window.location.reload();
   }
 }

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { AuthGuard } from './auth/shared/auth.guard';
+import { PermissionGuard } from './auth/shared/permission.guard';
 import { HomeContainerComponent } from './home/home-container/home-container.component';
 
 const routes: Routes = [
@@ -17,6 +18,17 @@ const routes: Routes = [
   {
     loadChildren: './http-status/http-status.module#HttpStatusModule',
     path: 'error'
+  },
+  {
+    canActivate: [
+      AuthGuard,
+      PermissionGuard
+    ],
+    data: {
+      requiredPermission: 'read:products'
+    },
+    loadChildren: './products/products.module#ProductsModule',
+    path: 'products'
   },
   {
     path: '**',

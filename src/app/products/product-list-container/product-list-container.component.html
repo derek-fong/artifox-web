@@ -1,0 +1,12 @@
+<div *ngIf="!isPlatformServer" id="product-list-container">
+  <h1>Products</h1>
+
+  <div *ngIf="!isLoading">
+    <ax-product-list *ngIf="products && products.length > 0" [products]="products"></ax-product-list>
+    <strong *ngIf="getProductsError" id="message-error-get-products">{{getProductsError.message}}</strong>
+  </div>
+
+  <ax-progress-spinner *ngIf="isLoading" [message]="'Loading Product List...'"></ax-progress-spinner>
+</div>
+
+<ax-progress-spinner-container *ngIf="isPlatformServer" [message]="'Loading Product List...'"></ax-progress-spinner-container>
